@@ -1,0 +1,46 @@
+
+/* -------------------------
+		GENERAL
+-------------------------*/
+body 		{	background-color: #FEFEFE;	font-family: "Arial";	font-size: 9pt; 	}
+a:link 		{	text-decoration: none; 		color: #ff0000 }
+a:visited 	{	text-decoration: none; 		color: #ff9900 }
+a:active 	{	text-decoration: none; 		color: #ff0000 }
+a:hover 	{	text-decoration: none; 		color: #ff0000 }
+hr 			{	color: #dedede;	height: 1px;}
+/* -------------------------
+		COMPONENTS
+-------------------------*/
+textarea{	width: 200px;	height: 100px;	font-family: Arial;	font-size: 10pt;	resize: none; 	border: 1px solid #cccccc; padding: 5px; }
+
+
+/* -------------------------
+		MAIN CONTAINERS 
+-------------------------*/
+#filtersContainer{
+	padding: 10px;
+	position: absolute;	left: 10px;	top: 10px;	
+	height: 500px;
+}
+
+#resultsContainer{
+	position: absolute;	left: 240px;	top: 10px;
+	width: 900px; 	height: 600px;
+}
+
+
+/* -------------------------
+		ENTITIES 
+-------------------------*/
+.entitiesPanel
+{
+	padding: 10px;
+	position: absolute;
+	overflow: auto;;
+	width: 190px;
+	height: 200px;
+}
+#urlsContainer		{		left: 00px; 	width:390px }
+#hashtagsContainer	{		left: 430px; 	}
+#mentionsContainer	{		left: 650px; 	}
+#twitsContainer		{		left: 00px;		top: 240px;		width: 890px;	height: 300px; }

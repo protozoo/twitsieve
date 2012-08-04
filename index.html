@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"	xml:lang="en">
+
+	<head>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="styles.css" />
+		<script type="text/javascript" src="jquery.1.7.2.js"></script>
+		<script type="text/javascript" src="scripts.js"></script>
+	</head>
+	<body>
+		<div id="appContainer">
+			<div id="filtersContainer">
+				<b>Keywords</b><br />
+				<textarea id="keywords_txt"></textarea><br /><br />
+				<b>Mentions</b><br />
+				<textarea id="mentions_txt"></textarea><br /><br />
+				<b>From users</b><br />
+				<textarea id="fromUsers_txt"></textarea><br /><br />
+				<input id="filterSubmit_btn" type="button" value="START" onclick="filterSubmitClicked()"/>
+				<input id="filterSubmit_btn" type="button" value="CLEAR" onclick="resetData()"/>
+			</div>
+			<div id="resultsContainer">
+				<div id="urlsContainer" class="entitiesPanel">
+					
+				</div>
+				<div id="hashtagsContainer" class="entitiesPanel">
+					
+				</div>
+				<div id="mentionsContainer" class="entitiesPanel">
+					
+				</div>
+				<div id="twitsContainer" class="entitiesPanel">
+					
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
