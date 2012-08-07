@@ -1,107 +1,57 @@
-var timerId, running = false, 
-	urls 		= [], 		urls_obj = {}, 
-	hashtags 	= [], 	hashtags_obj = {}, 
-	mentions 	= [], 	mentions_obj = {}, 
-	twits 		= [];
-	
-
-var keyTerm = encodeURIComponent( 'data visualization' );
-var twitter_url = 'https://search.twitter.com/search.json';
-var refresh_url = '?include_entities=1&q=' + keyTerm;
-var params = "&rpp=100&callback=?"
 
 
-function resetData()
-{
-	urls = [];			urls_obj = {};
-	hashtags = [];		hashtags_obj = {};
-	mentions = [];		mentions_obj = {};
-	twits = [];
-	$("#twitsContainer").html( "" );
-	$("#urlsContainer").html( "<b>URLS</b> <hr/>");
-	$("#hashtagsContainer").html( "<b>HASHTAGS</b> <hr/>" );
-	$("#mentionsContainer").html( "<b>MENTIONS</b> <hr/>" );
-}
+
+var twitterFeed;
 
 function filterSubmitClicked()
 {
-	if( running == true )
+	if( twitterFeed.running == true )
 	{
-		console.log( "- Twitter tracker stopped");
-		running = false;
-		clearInterval(timerId);
+		twitterFeed.stop();
 		$("#filterSubmit_btn").prop('value', 'START');
 	}
 	else
 	{
-		console.log( "+ Twitter tracker started" );
-		running = true;
-		refresh_url = '?include_entities=1&q=' + encodeURIComponent( $("textarea#keywords_txt").val() );
+		twitterFeed.start( $("textarea#keywords_txt").val() );
 		$("#filterSubmit_btn").prop('value', 'STOP');
-		getTwits();
-		timerId = setInterval( getTwits, 5000 )
 	}
+};
+
+function resetData()
+{
+	twitterFeed.resetData();
+	$("#twitsContainer").html( "" );
+	$("#urlsContainer").html( "<b>URLS</b> <hr/>");
+	$("#hashtagsContainer").html( "<b>HASHTAGS</b> <hr/>" );
+	$("#mentionsContainer").html( "<b>MENTIONS</b> <hr/>" );
+
 }
 
-function parseEntities( list, attribute, dictionary, targetArray )
+$(document).ready(function()
 {
-	if( list.length > 0 )
+	twitterFeed = new TwitterTracker ();
+	twitterFeed.addListener( "twits_received", function()
 	{
-		for( var i=0; i<list.length; i++ )
-		{
-			var itemValue = list[i][attribute];
-			var obj = {};
-			if( dictionary[itemValue] == null )
-			{
-				obj[attribute] = itemValue;
-				obj.counter = 0;
-				dictionary[itemValue] = obj;
-				targetArray.push( obj );
-			}
-			else
-			{
-				obj = dictionary[itemValue];
-			}
-			obj.counter++;
-		}
-	}
-}
+		console.log( "New twits received:" + twitterFeed.newTwits.length );
 
-function getTwits(  )
-{
-	$.getJSON( twitter_url+refresh_url+params, function (data)
-	{
-		console.log( "twits RECEIVED: " + data.results.length + ") " );
-		refresh_url = data.refresh_url;
 		var block = "";
-		$.each( data.results, function(i, twit)
+		var twits = twitterFeed.newTwits;
+		for( var i=0; i<twits.length; i++ )
 		{
-			var date_array = twit.created_at.split(" ");
-			var out = "<b>" + twit.from_user + "</b> <font size='-2' color='#666666'>(" + date_array[1] + " " + date_array[2] + " " + date_array[3] + " " + date_array[4] + ")</font><br/> ";
-			if( twit.metadata.recent_retweets != null ){
-				out += "<font color='#00CC44'>R</font> ";
-			}
+			var twit = twits[i];
+			var out = "<b>" + twit.from_user + "</b> <font size='-2' color='#666666'>(" + twit.date + ")</font><br/> ";		
 			out += replaceURLWithHTMLLinks( twit.text ) + "<hr/>";
 			block += out;
-
-		//	console.log( "URLS: " + twit.entities.urls.length)
-			if( twit.entities != null )
-			{
-				parseEntities( twit.entities.urls, "expanded_url", urls_obj, urls );
-				parseEntities( twit.entities.hashtags, "text", hashtags_obj, hashtags );
-				parseEntities( twit.entities.user_mentions, "screen_name", mentions_obj, mentions );
-			}
-		});
+		}
 		$("#twitsContainer").prepend( block );
 
-		printEntities( urls, "expanded_url", "#urlsContainer", "", "URLS" );
-		printEntities( hashtags, "text", "#hashtagsContainer", null, "HASHTAGS" );
-		printEntities( mentions, "screen_name", "#mentionsContainer", "http://twitter.com/", "MENTIONS" );
+		printEntities( twitterFeed.urls, "expanded_url", "#urlsContainer", "", "URLS" );
+		printEntities( twitterFeed.hashtags, "text", "#hashtagsContainer", null, "HASHTAGS" );
+		printEntities( twitterFeed.mentions, "screen_name", "#mentionsContainer", "http://twitter.com/", "MENTIONS" );
+	});
+	twitterFeed.resetData();
+});
 
-
-	} )
-	.error(function(msg) { console.log( "Error: " + msg); });
-}
 
 function printEntities( list, attribute, container, link, title )
 {
@@ -120,13 +70,5 @@ function printEntities( list, attribute, container, link, title )
 		}
 	}
 	$( container ).html( "<b>" + title + "</b> <hr/>" + html_out + "<br/>");
-
 }
-
-
-$(document).ready(function()
-{
-	console.log( "1. READY" );
-	resetData();
-});
 
